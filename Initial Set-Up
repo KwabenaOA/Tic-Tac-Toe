@@ -1,0 +1,243 @@
+import java.util.Scanner;
+public class tic_tac_toe
+{
+	private String[][] grid;
+	private String player1;
+	private String player2;
+	private int num;
+	private Scanner keyboard = new Scanner (System.in);
+	public tic_tac_toe(){}
+	public void opening()
+	{
+		System.out.println("Welcome to Tic Tac Toe!");
+		System.out.print("Please enter the name of Player 1: ");
+		this.player1 = keyboard.nextLine();
+		while(this.player1.equals("") || this.player1.equals(" "))
+		{
+			System.out.println();
+			System.out.println("Sorry, this is not a valid name.");
+			System.out.print("Please enter a valid name for Player 1: ");
+			this.player1 = keyboard.nextLine();
+		}
+		System.out.println();
+		System.out.print("Please enter the name of Player 2: ");
+		this.player2 = keyboard.nextLine();
+		while(this.player2.equals("") || this.player2.equals(" ") || this.player2.equals(this.player1))
+		{
+			System.out.println();
+			System.out.println("Sorry, this is not a valid name.");
+			System.out.print("Please enter a valid name for Player 2: ");
+			this.player2 = keyboard.nextLine();
+		}
+		System.out.println();
+		System.out.print("What is the size of the \"nxn\" grid (3 ≤ n ≤ 9): ");
+		
+		this.num = (int)(keyboard.nextDouble());
+		while(this.num <= 2 || this.num >= 10)
+		{
+			System.out.println();
+			System.out.println("Sorry, that size board is invalid.");
+			System.out.print("Please enter a valid size for the \"nxn\" grid (3 ≤ n ≤ 9): ");
+			this.num = (int)(keyboard.nextDouble());
+		}
+		System.out.println();
+		System.out.println("::PRESS THE SPACE BAR TO BEGIN::");
+		keyboard.nextLine();//TODO
+	}
+	public void makeBoard()
+	{
+		this.grid = new String[this.num][this.num];
+		for(int k = 0; k < this.num; k++)
+		{
+			for(int j = 0; j < this.num; j++)
+			{
+				this.grid[k][j] = " ";
+			}
+		}
+	}
+	public void printBoard()
+	{
+		//::Example Board::
+		//   1 2 3
+		//1 | |x| |
+		//2 |x|o| |
+		//3 | | |o|
+		System.out.print("  ");
+		for(int k = 1; k <= this.num; k++)
+		{
+			System.out.print(" " + k);
+		}
+		System.out.println();
+		for(int k = 0; k < this.num; k++)
+		{
+			System.out.print((k+1) + " ");
+			for(int j = 0; j < this.num; j++)
+			{	
+				System.out.print("|");
+				System.out.print(this.grid[k][j]);
+			}
+			System.out.println("|");
+		}
+	}
+	public boolean gameOver()
+	{
+		int count = 1;
+		if(!this.grid[0][0].equals(" "))//DIAGONAL top-left::bottom-right
+		{
+			count = 1;
+			for(int i = 0; i < this.num-1; i++)
+			{
+				if(!this.grid[i][i].equals(this.grid[i+1][i+1]))
+					break;
+				count++;
+			}
+			if(count == this.num)
+				return true;
+		}
+		if(!this.grid[this.num-1][0].equals(" "))//DIAGONAL bottom-left::top-right
+		{
+			count = 1;
+			for(int i = 0; i < this.num-1; i++)
+			{
+				if(!this.grid[this.num-1-i][i].equals(this.grid[this.num-2-i][i+1]))
+					break;
+				count++;
+			}
+			if(count == this.num)
+				return true;
+		}
+		for(int k = 0; k < this.num; k++)
+		{
+			count = 1;
+			if(this.grid[k][0].equals(" "))
+				break;
+			for(int i = 0; i < this.num-1; i++)
+			{
+				if(!this.grid[k][i].equals(this.grid[k][i+1]))//HORIZONTAL left::right
+					break;
+				count++;
+			}
+			if(count == this.num)
+				return true;
+		}
+		for(int j = 0; j < this.num; j++)
+		{
+			count = 1;
+			if(this.grid[0][j] == " ")
+				break;
+			for(int i = 0; i < this.num-1; i++)
+			{
+				if(!this.grid[i][j].equals(this.grid[i+1][j]))//VERTICAL top::bottom
+					break;
+				count++;
+			}
+			if(count == this.num)
+				return true;
+		}
+		return false;
+	}
+	public boolean draw()
+	{
+		for(int i = 0; i < this.num; i++)
+		{
+			for(int j = 0; j < this.num; j++)
+			{
+				if(this.grid[i][j].equals(" "))
+					return false;
+			}
+		}
+		return true;
+	}
+	public String[][] makeGrid(int c)
+	{
+		String[][] x = new String[c][c];
+		for(int k = 0; k < c; k++)
+		{
+			for(int j = 0; j < c; j++)
+			{
+				x[k][j] = " ";
+			}
+		}
+		return x;
+	}
+	public void play()
+	{
+		opening();
+		makeBoard();
+		int turn = 1;
+		while(gameOver() == false && draw() == false)
+		{	
+			turn++;
+			System.out.println();
+			printBoard();
+			System.out.println();
+			if(turn % 2 == 0)
+			{
+				System.out.print(this.player1 + ", pick a coordinate to place your piece (\"row *space* column\" ie. \"1 3\"): ");
+				int row = (int)(keyboard.nextDouble());
+				int col = (int)(keyboard.nextDouble());
+				while(row > this.num || row < 1 || col > this.num || col < 1 || this.grid[row-1][col-1] != " ")
+				{
+					System.out.println();
+					System.out.println("Sorry, you cannot place your piece there.");
+					System.out.print(this.player1 + ", pick a coordinate to place your piece (\"row *space* column\" ie. \"1 3\"): ");
+					row = (int)(keyboard.nextDouble());
+					col = (int)(keyboard.nextDouble());
+				}
+				this.grid[row-1][col-1] = "x";
+			}
+			else if(turn % 2 != 0)
+			{
+				System.out.print(this.player2 + ", pick a coordinate to place your piece (\"row *space* column\" ie. \"1 3\"): ");
+				int row = (int)(keyboard.nextDouble());
+				int col = (int)(keyboard.nextDouble());
+				while(row > this.num || row < 1 || col > this.num || col < 1 || this.grid[row-1][col-1] != " ")
+				{
+					System.out.println();
+					System.out.println("Sorry, you cannot place your piece there.");
+					System.out.print(this.player2 + ", pick a coordinate to place your piece (\"row *space* column\" ie. \"1 3\"): ");
+					row = (int)(keyboard.nextDouble());
+					col = (int)(keyboard.nextDouble());
+				}
+				this.grid[row-1][col-1] = "o";
+			}
+		}
+		System.out.println();
+		printBoard();
+		System.out.println();
+		System.out.println("GAME OVER");
+		if(draw() == true)
+			System.out.println("Draw!");
+		else
+		{
+			if(turn % 2 == 0)
+				System.out.println(this.player1 + " wins!");
+			else if(turn % 2 != 0)
+				System.out.println(this.player2 + " wins!");
+		}
+		System.out.print("Do you want to play again? (1 = Yes, 2 = No): ");
+		int again = (int)(keyboard.nextDouble());
+		while(again != 1 && again != 2)
+		{
+			System.out.println();
+			System.out.println("Sorry, that is an invalid response, please enter a valid response.");
+			System.out.print("Do you want to play again? (1 = Yes, 2 = No): ");
+			again = (int)(keyboard.nextDouble());
+		}
+		System.out.println();
+		if(again == 1)
+		{
+			System.out.println("___________________________________________________");
+			System.out.println();
+			keyboard.nextLine();
+			play();
+		}
+		else if(again == 2)
+			System.out.print("Thanks for playing!");
+	}
+	public static void main(String args [])
+	{
+		tic_tac_toe game = new tic_tac_toe();
+		game.play();
+	}
+}
